@@ -59,6 +59,13 @@ class RPGGUI:
         tk.Button(dialog, text="Create", command=create_character).pack(pady=10)
         dialog.grab_set()
         
+        # Wait for the dialog to be closed before continuing
+        self.root.wait_window(dialog)
+        
+        # If character is still None after dialog closes, exit the application
+        if self.character is None:
+            messagebox.showerror("Error", "Character creation cancelled")
+            self.root.quit()
     def create_widgets(self):
         # Character Stats Frame
         stats_frame = ttk.LabelFrame(self.root, text="Character Stats")
@@ -95,12 +102,140 @@ class RPGGUI:
         buttons_frame = ttk.Frame(self.root)
         buttons_frame.pack(fill="x", padx=10, pady=5)
         
-        ttk.Button(buttons_frame, text="New Task", command=self.create_task_dialog).pack(side="left", padx=5)
-        ttk.Button(buttons_frame, text="Complete Task", command=self.complete_task_dialog).pack(side="left", padx=5)
-        ttk.Button(buttons_frame, text="Visit Marketplace", command=self.show_marketplace).pack(side="left", padx=5)
-        ttk.Button(buttons_frame, text="Save & Exit", command=self.save_and_exit).pack(side="right", padx=5)
+        # Left side buttons
+        left_buttons = ttk.Frame(buttons_frame)
+        left_buttons.pack(side="left")
+        
+        ttk.Button(left_buttons, text="New Task", command=self.create_task_dialog).pack(side="left", padx=5)
+        ttk.Button(left_buttons, text="Complete Task", command=self.complete_task_dialog).pack(side="left", padx=5)
+        ttk.Button(left_buttons, text="Edit Task", command=self.edit_task_dialog).pack(side="left", padx=5)
+        ttk.Button(left_buttons, text="Delete Task", command=self.delete_task_dialog).pack(side="left", padx=5)
+        ttk.Button(left_buttons, text="Visit Marketplace", command=self.show_marketplace).pack(side="left", padx=5)
+        
+        # Right side buttons
+        right_buttons = ttk.Frame(buttons_frame)
+        right_buttons.pack(side="right")
+        
+        ttk.Button(right_buttons, text="Settings", command=self.show_settings).pack(side="right", padx=5)
+        ttk.Button(right_buttons, text="Save & Exit", command=self.save_and_exit).pack(side="right", padx=5)
         
         self.update_display()
+        
+    def delete_task_dialog(self):
+        selection = self.task_list.selection()
+        if not selection:
+            messagebox.showwarning("Warning", "Please select a task to delete!")
+            return
+            
+        idx = self.task_list.index(selection[0])
+        task = self.tasks[idx]
+        
+        if messagebox.askyesno("Confirm Delete", f"Are you sure you want to delete task: {task._title}?"):
+            self.tasks.pop(idx)
+            self.update_display()
+            messagebox.showinfo("Success", "Task deleted successfully!")
+            
+    def edit_task_dialog(self):
+        selection = self.task_list.selection()
+        if not selection:
+            messagebox.showwarning("Warning", "Please select a task to edit!")
+            return
+            
+        idx = self.task_list.index(selection[0])
+        task = self.tasks[idx]
+        
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Edit Task")
+        dialog.geometry("400x300")
+        dialog.transient(self.root)
+        
+        tk.Label(dialog, text="Title:").pack(pady=5)
+        title_entry = tk.Entry(dialog)
+        title_entry.insert(0, task._title)
+        title_entry.pack()
+        
+        tk.Label(dialog, text="Description:").pack(pady=5)
+        desc_entry = tk.Entry(dialog)
+        desc_entry.insert(0, task._description)
+        desc_entry.pack()
+        
+        if isinstance(task, TodoTask):
+            priority_var = tk.StringVar(value=task._priority)
+            priority_frame = ttk.LabelFrame(dialog, text="Priority")
+            priority_frame.pack(pady=10)
+            ttk.Radiobutton(priority_frame, text="Low", variable=priority_var, value="low").pack(side="left")
+            ttk.Radiobutton(priority_frame, text="Medium", variable=priority_var, value="medium").pack(side="left")
+            ttk.Radiobutton(priority_frame, text="High", variable=priority_var, value="high").pack(side="left")
+        
+        def save_changes():
+            new_title = title_entry.get().strip()
+            if not new_title:
+                messagebox.showerror("Error", "Title is required!")
+                return
+                
+            task._title = new_title
+            task._description = desc_entry.get().strip()
+            
+            if isinstance(task, TodoTask):
+                task._priority = priority_var.get()
+                
+            self.update_display()
+            dialog.destroy()
+            messagebox.showinfo("Success", "Task updated successfully!")
+            
+        ttk.Button(dialog, text="Save Changes", command=save_changes).pack(pady=10)
+        dialog.grab_set()
+        
+    def show_settings(self):
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Settings")
+        dialog.geometry("400x300")
+        dialog.transient(self.root)
+        
+        # Change Character Name
+        name_frame = ttk.LabelFrame(dialog, text="Change Character Name")
+        name_frame.pack(fill="x", padx=10, pady=5)
+        
+        name_entry = tk.Entry(name_frame)
+        name_entry.insert(0, self.character._name)
+        name_entry.pack(padx=5, pady=5)
+        
+        def change_name():
+            new_name = name_entry.get().strip()
+            if new_name:
+                self.character._name = new_name
+                self.update_display()
+                messagebox.showinfo("Success", "Character name updated!")
+            else:
+                messagebox.showerror("Error", "Name cannot be empty!")
+                
+        ttk.Button(name_frame, text="Change Name", command=change_name).pack(pady=5)
+        
+        # Reset All Data
+        reset_frame = ttk.LabelFrame(dialog, text="Reset All Data")
+        reset_frame.pack(fill="x", padx=10, pady=5)
+        
+        def reset_data():
+            if messagebox.askyesno("Confirm Reset", "Are you sure you want to reset all data? This cannot be undone!"):
+                new_name = name_entry.get().strip()
+                if new_name:
+                    self.character._name = new_name
+                    self.character._level = 1
+                    self.character._xp = 0
+                    self.character._health = 30
+                    self.character._hunger = 100
+                    self.character._thirst = 100
+                    self.character._infection = 0
+                    self.tasks.clear()
+                    self.update_display()
+                    dialog.destroy()
+                    messagebox.showinfo("Success", "All data has been reset!")
+                else:
+                    messagebox.showerror("Error", "Name cannot be empty!")
+                    
+        ttk.Button(reset_frame, text="Reset All Data", command=reset_data).pack(pady=5)
+        
+        dialog.grab_set()
         
     def update_display(self):
         # Update stats
@@ -181,13 +316,11 @@ class RPGGUI:
             messagebox.showinfo("Info", "This task is already completed!")
             return
             
+        success = True  # Initialize success variable
         if isinstance(task, DailyTask):
-            if messagebox.askyesno("Success?", "Was the task successful?"):
-                status = task.complete(True)
-                reward = task.calculate_reward()
-            else:
-                status = task.complete(False)
-                reward = -5
+            success = messagebox.askyesno("Success?", "Was the task successful?")
+            status = task.complete(success)
+            reward = task.calculate_reward() if success else -5
         else:
             status = task.complete()
             reward = task.calculate_reward()
@@ -203,6 +336,7 @@ class RPGGUI:
                 self.character._health += reward
                 messagebox.showinfo("Failure", f"Lost {abs(reward)} health points!")
                 
+            # Reduce stats after task completion
             self.character._hunger = max(0, self.character._hunger - 1)
             self.character._thirst = max(0, self.character._thirst - 1)
             if not success and isinstance(task, DailyTask):
