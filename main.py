@@ -146,6 +146,20 @@ def complete_task(character, tasks):
             character._thirst = max(0, character._thirst - 1)
             if not success and isinstance(task, DailyTask):
                 character._infection = min(100, character._infection + 1)
+                
+            # Add waiting menu after task completion
+            print("\nWhat would you like to do next?")
+            print("1. Complete another task")
+            print("2. Return to main menu")
+            while True:
+                choice = input("Choose an option (1-2): ").strip()
+                if choice == "1":
+                    return complete_task(character, tasks)  # Recursive call to complete another task
+                elif choice == "2":
+                    return  # Return to main menu
+                else:
+                    print("Invalid option! Please choose 1 or 2.")
+                    
     except ValueError:
         print("Invalid input!")
 
