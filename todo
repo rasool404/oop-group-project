@@ -1,1 +1,65 @@
 make daily tasks to be done once in a day
+create ui
+
+
+
+
+Suggestions by AI:
+1. **Task Categories/Tags**
+   - Allow users to categorize tasks (e.g., "Work", "Health", "Study")
+   - Add filtering and viewing tasks by category
+   - Provide different XP rewards based on categories
+
+2. **Achievement System**
+   - Add achievements for completing certain milestones:
+     - Complete X tasks in a row
+     - Maintain perfect health for X days
+     - Reach level milestones
+     - Complete all daily tasks for a week
+
+3. **Inventory System**
+   - Allow storing multiple items instead of using them immediately
+   - Add inventory capacity based on character level
+   - Enable item trading or selling back to marketplace
+
+4. **Task Streaks**
+   - Track consecutive completions of daily tasks
+   - Provide bonus rewards for maintaining streaks
+   - Add streak-based achievements
+
+5. **Character Skills**
+   - Add different skills that can be leveled up
+   - Skills could provide bonuses:
+     - "Efficiency": Increased XP from tasks
+     - "Resilience": Reduced health loss
+     - "Bargaining": Better marketplace prices
+
+6. **Time-based Features**
+   - Add task deadlines
+   - Implement task scheduling
+   - Add time-sensitive rewards
+   - Daily reset for shop items
+
+7. **Social Features**
+   - Add party/team system
+   - Share achievements
+   - Cooperative tasks
+   - Leaderboards
+
+8. **Quest System**
+   - Create quest chains (multiple related tasks)
+   - Add story elements
+   - Special rewards for quest completion
+   - Daily/weekly quests
+
+9. **Enhanced Marketplace**
+   - Random daily deals
+   - Special weekend items
+   - Rare items that appear occasionally
+   - Item crafting system
+
+10. **Statistics and Analytics**
+    - Track task completion rates
+    - View progress over time
+    - Generate performance reports
+    - Task difficulty analysis

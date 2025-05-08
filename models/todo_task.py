@@ -10,5 +10,8 @@ class TodoTask(BaseTask):
         return rewards[self._priority]
         
     def complete(self):
+        if self._completed:
+            return "already_completed"  # Return a status code instead of printing
         self._completed = True
+        return "completed"
         return self.calculate_reward()

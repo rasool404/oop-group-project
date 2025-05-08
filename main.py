@@ -124,13 +124,20 @@ def complete_task(character, tasks):
         task_idx = int(input("\nEnter task number to complete: ")) - 1
         if 0 <= task_idx < len(tasks):
             task = tasks[task_idx]
-            success = True  # Default value
+            
+            success = True  # Initialize success to a default value
             if isinstance(task, DailyTask):
                 success = input("Was the task successful? (y/n): ").lower() == 'y'
-                reward = task.complete(success)
+                status = task.complete(success)
             else:
-                reward = task.complete()
+                status = task.complete()
                 
+            if status == "already_completed":
+                print("This task has already been completed!")
+                return
+            
+            reward = task.calculate_reward() if status == "completed" else -5
+            
             if reward > 0:
                 character._xp += reward
                 print(f"Gained {reward} XP!")
