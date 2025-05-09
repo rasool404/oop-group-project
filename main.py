@@ -42,7 +42,7 @@ def settings_menu(character, tasks):
                 character._hunger = 100
                 character._thirst = 100
                 character._infection = 0
-                tasks.clear()  # Clear all tasks
+                tasks.clear() 
                 print("All data has been reset to default values!")
             else:
                 print("Reset cancelled - name cannot be empty!")
