@@ -6,8 +6,8 @@ class BaseCharacter(ABC):
         self._level = max(1, level)
         self._xp = max(0, xp)
         self._health = min(max(0, health), 30)
-        self._hunger = 100
-        self._thirst = 100
+        self._hunger = 0
+        self._thirst = 0
         self._infection = 0
         
     @abstractmethod
@@ -58,11 +58,11 @@ class BaseCharacter(ABC):
         
     @hunger.setter
     def hunger(self, value):
-        self._hunger = min(max(0, value), 100)
+        self._hunger = min(max(100, value), 0)
         
     @thirst.setter
     def thirst(self, value):
-        self._thirst = min(max(0, value), 100)
+        self._thirst = min(max(100, value), 0)
         
     @infection.setter
     def infection(self, value):

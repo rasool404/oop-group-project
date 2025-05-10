@@ -39,8 +39,8 @@ def settings_menu(character, tasks):
                 character._level = 1
                 character._xp = 0
                 character._health = 30
-                character._hunger = 100
-                character._thirst = 100
+                character._hunger = 0
+                character._thirst = 0
                 character._infection = 0
                 tasks.clear() 
                 print("All data has been reset to default values!")
@@ -149,8 +149,8 @@ def complete_task(character, tasks):
                 print(f"Lost {abs(reward)} health points!")
                 
             # Reduce stats after task completion
-            character._hunger = max(0, character._hunger - 1)
-            character._thirst = max(0, character._thirst - 1)
+            character._hunger = max(100, character._hunger + 1)
+            character._thirst = max(100, character._thirst + 1)
             if not success and isinstance(task, DailyTask):
                 character._infection = min(100, character._infection + 1)
                 
@@ -187,9 +187,9 @@ def visit_marketplace(character):
             item = items[choice]
             if character._xp >= item._cost:
                 # Check if using the item would exceed maximum stats
-                if isinstance(item, Food) and character._hunger + item._effect_value > 100:
+                if isinstance(item, Food) and character._hunger - item._effect_value < 0:
                     print("You're not hungry enough to eat this!")
-                elif isinstance(item, Water) and character._thirst + item._effect_value > 100:
+                elif isinstance(item, Water) and character._thirst - item._effect_value < 0:
                     print("You're not thirsty enough to drink this!")
                 elif isinstance(item, Medicine) and character._infection - item._effect_value < 0:
                     print("You don't need medicine right now!")

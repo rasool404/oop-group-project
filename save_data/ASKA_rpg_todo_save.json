@@ -1,0 +1,75 @@
+{
+    "character": {
+        "_name": "ASKA",
+        "_level": 1,
+        "_xp": 40,
+        "_health": 30,
+        "_hunger": 110,
+        "_thirst": 110,
+        "_infection": 0
+    },
+    "tasks": [
+        {
+            "_title": "Musty",
+            "_description": "wneffi",
+            "_completed": true,
+            "_deadline": "wqf",
+            "_scheduled_start_time": "No",
+            "_scheduled_end_time": "No",
+            "_is_recurring": "No",
+            "_base_xp_reward": 0,
+            "_base_gold_reward": 0,
+            "_base_item_rewards": [],
+            "_early_bonus_condition": "Not set",
+            "_early_bonus_xp": 0,
+            "_sub_tasks": []
+        },
+        {
+            "_title": "aeaf",
+            "_description": "awfawf",
+            "_completed": true,
+            "_deadline": "fafaww",
+            "_scheduled_start_time": "No",
+            "_scheduled_end_time": "No",
+            "_is_recurring": "No",
+            "_base_xp_reward": 0,
+            "_base_gold_reward": 0,
+            "_base_item_rewards": [],
+            "_early_bonus_condition": "Not set",
+            "_early_bonus_xp": 0,
+            "_sub_tasks": []
+        },
+        {
+            "_title": "sdvksanvs",
+            "_description": "afaffa",
+            "_completed": true,
+            "_deadline": "awf",
+            "_scheduled_start_time": "No",
+            "_scheduled_end_time": "No",
+            "_is_recurring": "No",
+            "_base_xp_reward": 0,
+            "_base_gold_reward": 0,
+            "_base_item_rewards": [],
+            "_early_bonus_condition": "Not set",
+            "_early_bonus_xp": 0,
+            "_sub_tasks": [],
+            "_priority": "low"
+        },
+        {
+            "_title": "aeve",
+            "_description": "agwa",
+            "_completed": true,
+            "_deadline": "awga",
+            "_scheduled_start_time": "No",
+            "_scheduled_end_time": "No",
+            "_is_recurring": "No",
+            "_base_xp_reward": 0,
+            "_base_gold_reward": 0,
+            "_base_item_rewards": [],
+            "_early_bonus_condition": "Not set",
+            "_early_bonus_xp": 0,
+            "_sub_tasks": [],
+            "_priority": "low"
+        }
+    ]
+}

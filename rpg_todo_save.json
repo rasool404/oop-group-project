@@ -1,0 +1,29 @@
+{
+    "character": {
+        "_name": "ASKA",
+        "_level": 1,
+        "_xp": 0,
+        "_health": 30,
+        "_hunger": 100,
+        "_thirst": 100,
+        "_infection": 0
+    },
+    "tasks": [
+        {
+            "_title": "Must",
+            "_description": "I m gonna jerk off 3 times",
+            "_completed": false,
+            "_priority": "low",
+            "_deadline": "everyday",
+            "_base_xp_reward": 100,
+            "_scheduled_start_time": "Not set",
+            "_scheduled_end_time": "Not set",
+            "_is_recurring": "No",
+            "_base_gold_reward": 0,
+            "_base_item_rewards": [],
+            "_early_bonus_condition": "N/A",
+            "_early_bonus_xp": 0,
+            "_sub_tasks": []
+        }
+    ]
+}
