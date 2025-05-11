@@ -3,6 +3,7 @@ from models.todo_task import TodoTask
 from models.daily_task import DailyTask
 from utils.data_manager import DataManager
 from models.consumables import Food, Water, Medicine
+from models.task_manager import TaskManager
 
 def display_menu():
     print("\n=== Post-Apocalyptic RPG To-Do List ===")
@@ -206,6 +207,8 @@ def main():
     try:
         # Load game state or create new character
         game_state = DataManager.load_game_state()
+        task_manager = TaskManager()
+        
         if game_state:
             # Initialize character and tasks from saved state
             character = Survivor(game_state["character"]["_name"])
@@ -218,18 +221,10 @@ def main():
             character._infection = game_state["character"]["_infection"]
             
             # Load tasks from game_state
-            tasks = []
-            for task_data in game_state["tasks"]:
-                if "priority" in task_data:
-                    task = TodoTask(task_data["_title"], task_data["_description"], task_data.get("_priority", "low"))
-                else:
-                    task = DailyTask(task_data["_title"], task_data["_description"])
-                task._completed = task_data["_completed"]
-                tasks.append(task)
+            task_manager.load_tasks(game_state["tasks"])
         else:
             name = input("Enter your character name: ")
             character = Survivor(name)
-            tasks = []
         
         while True:
             choice = display_menu()
@@ -237,17 +232,17 @@ def main():
             if choice == "1":
                 view_character_stats(character)
             elif choice == "2":
-                create_task(tasks)
+                create_task(task_manager)
             elif choice == "3":
-                view_tasks(tasks)
+                view_tasks(task_manager.get_tasks())
             elif choice == "4":
-                complete_task(character, tasks)
+                complete_task(character, task_manager)
             elif choice == "5":
                 visit_marketplace(character)
             elif choice == "6":
-                delete_task(tasks)
+                delete_task(task_manager)
             elif choice == "7":
-                settings_menu(character, tasks)
+                settings_menu(character, task_manager)
             elif choice == "8":
                 break
             else:
@@ -262,19 +257,112 @@ def main():
         print(f"An error occurred: {str(e)}")
     finally:
         # Save game state before exit
-        DataManager.save_game_state(character, tasks)
+        DataManager.save_game_state(character, task_manager.get_tasks())
         print("Game saved. Goodbye!")
 
-def delete_task(tasks):
+def create_task(task_manager):
+    print("\nCreate New Task")
+    
+    # Task type validation
+    while True:
+        print("Task Types:")
+        print("1. Todo")
+        print("2. Habit")
+        task_type = input("Choose task type (1 or 2): ").strip()
+        if task_type in ["1", "2"]:
+            break
+        print("Error: Invalid task type! Please choose 1 for Todo or 2 for Habit.")
+    
+    title = input("Enter task title: ").strip()
+    description = input("Enter task description (optional): ").strip()
+    
+    if task_type == "1":
+        while True:
+            priority = input("Enter priority (low/medium/high) [default: low]: ").lower().strip()
+            if not priority:
+                priority = "low"
+            if priority in ["low", "medium", "high"]:
+                break
+            print("Error: Priority must be low, medium, or high!")
+            
+        if task_manager.create_task("todo", title, description, priority):
+            print("Task created successfully!")
+        else:
+            print("Failed to create task: Title is required!")
+    else:
+        if task_manager.create_task("daily", title, description):
+            print("Task created successfully!")
+        else:
+            print("Failed to create task: Title is required!")
+    
+    input("\nPress Enter to continue...")
+
+def complete_task(character, task_manager):
+    tasks = task_manager.get_tasks()
+    view_tasks(tasks, wait_for_input=False)
+    if not tasks:
+        return
+        
+    try:
+        task_idx = int(input("\nEnter task number to complete: ")) - 1
+        if 0 <= task_idx < len(tasks):
+            task = tasks[task_idx]
+            
+            success = True
+            if isinstance(task, DailyTask):
+                success = input("Was the task successful? (y/n): ").lower() == 'y'
+            
+            status, reward = task_manager.complete_task(task_idx, character, success)
+            
+            if status == "already_completed":
+                print("This task has already been completed!")
+                return
+            elif status == "invalid_index":
+                print("Invalid task number!")
+                return
+            
+            if reward > 0:
+                character._xp += reward
+                print(f"Gained {reward} XP!")
+                if character._xp >= character.calculate_xp_needed():
+                    character.level_up()
+                    print("Level Up!")
+            else:
+                character._health += reward
+                print(f"Lost {abs(reward)} health points!")
+            
+            # Reduce stats after task completion
+            character._hunger = max(0, character._hunger - 1)
+            character._thirst = max(0, character._thirst - 1)
+            if not success and isinstance(task, DailyTask):
+                character._infection = min(100, character._infection + 1)
+            
+            # Add waiting menu after task completion
+            print("\nWhat would you like to do next?")
+            print("1. Complete another task")
+            print("2. Return to main menu")
+            while True:
+                choice = input("Choose an option (1-2): ").strip()
+                if choice == "1":
+                    return complete_task(character, task_manager)
+                elif choice == "2":
+                    return
+                else:
+                    print("Invalid option! Please choose 1 or 2.")
+                    
+    except ValueError:
+        print("Invalid input!")
+
+def delete_task(task_manager):
+    tasks = task_manager.get_tasks()
     view_tasks(tasks, wait_for_input=False)
     if not tasks:
         return
         
     try:
         task_idx = int(input("\nEnter task number to delete: ")) - 1
-        if 0 <= task_idx < len(tasks):
-            task = tasks.pop(task_idx)
-            print(f"Task '{task._title}' deleted successfully!")
+        if task_manager.delete_task(task_idx):
+            print("Task deleted successfully!")
         else:
             print("Invalid task number!")
     except ValueError:
