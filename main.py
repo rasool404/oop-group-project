@@ -281,18 +281,4 @@ def delete_task(tasks):
         print("Invalid input!")
 
 if __name__ == "__main__":
-    # Ask user for preferred interface
-    print("Choose interface:")
-    print("1. Command Line Interface (CLI)")
-    print("2. Graphical User Interface (GUI)")
-    
-    choice = input("Enter choice (1-2): ").strip()
-    
-    if choice == "2":
-        import tkinter as tk
-        from gui import RPGGUI
-        root = tk.Tk()
-        app = RPGGUI(root)
-        root.mainloop()
-    else:
-        main()
+    main()
